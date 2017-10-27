@@ -11,10 +11,20 @@ public class Main {
 
     public static void main(String ...args){
         Set<String> project = new HashSet<>();
-        project.add("*");
+        project.add("userNo");
+        project.add("userName");
+        project.add("userID");
+        project.add("userNick");
 
+        SelectSQL selectSQL = SelectSQL.builder()
+                .addPdojectSet(project)
+                .setTable("tbluser")
+                .addWhere("status", "=", "AAA")
+                .addWhere("status", "<", "3")
+                .addWhere("regDate", "<", "NOW()")
+                .addOrderBy("regDate DESC")
+                .build();
 
-        SelectSQL selectSQL = SelectSQL.builder().addPdojectSet(project).addTable("tbluser").addWhere("status=1").build();
         Log.e(selectSQL.toString());
     }
 }

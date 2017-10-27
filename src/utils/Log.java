@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * @author EuiJin.Ham
@@ -9,6 +10,7 @@ import java.util.Calendar;
  * @apiNote The error stream and the standard stream are none-thread-safe.
  */
 public class Log {
+
     public static final String ERR = "[WARN]";
     public static final String INFO = "[INFO]";
 
@@ -38,7 +40,9 @@ public class Log {
 
     private static String logPrefix(String prefix){
         final String str = String.format("%s %s - [%s] ", prefix, Calendar.getInstance().getTime().toString(), Thread.currentThread().getName());
+
         return str;
     }
+
 }
 

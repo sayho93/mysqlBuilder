@@ -1,33 +1,44 @@
 package org.ejapps.sayho.sql;
 
 import com.sun.deploy.util.StringUtils;
+import org.ejapps.sayho.sql.model.OperatorPair;
+import org.ejapps.sayho.sql.model.PairMap;
 
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by sayho on 2017-10-27.
  */
 public class SelectSQL extends SQL {
-    private final SQLConfig sqlConfig;
+    private SQLConfig sqlConfig;
 
-    private Set<String> projectSet;
-    private String table;
-    private String where;
+    private String whereClause;
     private String orderBy;
     private String limit;
 
     private SelectSQL(SQLConfig sqlConfig){
         this.sqlConfig = sqlConfig;
-    }
 
-    private SelectSQL(Set<String> projectSet, String table, String where, String orderBy, String limit){
-        this.projectSet = projectSet;
-        this.table = table;
-        this.where = where;
-        this.orderBy = orderBy;
-        this.limit = limit;
+        Iterator<String> iter = sqlConfig.getWhere().keySet().iterator();
 
-        this.sqlConfig = new SQLConfig(projectSet, table, where, orderBy, limit);
+        List<String> tempList = new Vector<>();
+
+        while(iter.hasNext()){
+            final String column = iter.next();
+            for(OperatorPair pair : sqlConfig.getWhere().get(column)){
+                String last = pair.getRight();
+                // TODO 효율적으로 처리하도록 수정
+                try{
+                    Double.parseDouble(last);
+                }catch (NumberFormatException e){
+                    last = "'" + last + "'";
+                }
+                tempList.add("`" + column + "` " + pair.getLeft() + " " + last);
+            }
+        }
+
+        this.whereClause = StringUtils.join(tempList, " AND ");
+
     }
 
     public SQLConfig config() {
@@ -36,18 +47,15 @@ public class SelectSQL extends SQL {
 
     @Override
     public String toString() {
-//        return "SelectSql{" +
-//                "SQLConfig=" + sqlConfig +
-//                '}';
-        String query = "SELECT ";
-        query += "`" + StringUtils.join(sqlConfig.getProjectSet(), "`,`") + "`";
-        query += " FROM " + sqlConfig.getTable();
-        query += " WHERE " + sqlConfig.getWhere();
+        String query = "\n\nSELECT ";
+        query += "`" + StringUtils.join(sqlConfig.getProjectSet(), "`,`") + "`\n";
+        query += "FROM " + sqlConfig.getTable() + "\n";
+        query += "WHERE " + this.whereClause + "\n";
 
         if(orderBy != null)
-            query += " ORDER BY " + sqlConfig.getOrderBy();
+            query += "ORDER BY " + sqlConfig.getOrderBy() + "\n";
         if(limit != null)
-            query += " LIMIT " + sqlConfig.getLimit();
+            query += "LIMIT " + sqlConfig.getLimit() + "\n";
 
         return query;
     }
@@ -68,12 +76,15 @@ public class SelectSQL extends SQL {
             return this;
         }
 
-        public SQLBuilder addTable(String table){
+        public SQLBuilder setTable(String table){
             this.sqlConfig.setTable(table);
             return this;
         }
 
-        public SQLBuilder addWhere(String where){
+        public SQLBuilder addWhere(String column, String operator, String option2){
+            PairMap where = sqlConfig.getWhere();
+            OperatorPair tmp = new OperatorPair(operator, option2);
+            where.addCondition(column, tmp);
             this.sqlConfig.setWhere(where);
             return this;
         }

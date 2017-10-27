@@ -1,5 +1,7 @@
 package org.ejapps.sayho.sql;
 
+import org.ejapps.sayho.sql.model.PairMap;
+
 import java.util.HashSet;
 
 /**
@@ -12,7 +14,7 @@ public class Builder {
         sqlConfig = new SQLConfig();
         sqlConfig.setProjectSet(new HashSet<>());
         sqlConfig.setTable("");
-        sqlConfig.setWhere("");
+        sqlConfig.setWhere(new PairMap());
         sqlConfig.setOrderBy("");
         sqlConfig.setLimit("");
     }

@@ -1,5 +1,7 @@
 package org.ejapps.sayho.sql;
 
+import org.ejapps.sayho.sql.model.PairMap;
+
 import java.util.Set;
 
 /**
@@ -11,14 +13,15 @@ public class SQLConfig {
 
     private Set<String> projectSet;
     private String table;
-    private String where;
+//    private String where;
+    private PairMap where;
     private String orderBy;
     private String limit;
 
     public SQLConfig() {
     }
 
-    public SQLConfig(Set<String> projectSet, String table, String where, String orderBy, String limit){
+    public SQLConfig(Set<String> projectSet, String table, PairMap where, String orderBy, String limit){
         this.projectSet = projectSet;
         this.table = table;
         this.where = where;
@@ -38,7 +41,7 @@ public class SQLConfig {
         return table;
     }
 
-    public String getWhere() {
+    public PairMap getWhere() {
         return where;
     }
 
@@ -57,7 +60,7 @@ public class SQLConfig {
         this.table = table;
     }
 
-    public void setWhere(String where) {
+    public void setWhere(PairMap where) {
         this.where = where;
     }
 
